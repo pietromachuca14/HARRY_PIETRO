@@ -1,59 +1,27 @@
 // ========================================
-// PÁGINA DE DETALHES - JOGADORES DO CORINTHIANS
+// PÁGINA DE DETALHES - PARTIDAS DE FUTEBOL
 // AV1 DWB - Pietro - Parte 2
 // ========================================
 
-// Função para buscar os jogadores em `players.json`
-async function fetchPlayers() {
+const API_URL = 'https://www.scorebat.com/video-api/v3/';
+
+// Função para buscar as partidas na API pública do Scorebat
+async function fetchMatches() {
     try {
-        const res = await fetch('players.json');
-        if (!res.ok) throw new Error('Falha ao buscar players.json');
-        return await res.json();
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error(`Falha ao buscar API: ${res.status}`);
+        const data = await res.json();
+        return Array.isArray(data.response) ? data.response : [];
     } catch (err) {
-        console.error('Erro ao carregar players.json', err);
-        // Retornar fallback mínimo para permitir visualizar páginas abertas localmente
+        console.error('Erro ao carregar partidas da API', err);
         return [
             {
-                id: 1,
-                name: 'Hugo Souza',
-                number: 1,
-                position: 'Goleiro',
-                age: 27,
-                height: '1.88m',
-                nationality: 'Brasil',
-                joinYear: '2024',
-                imageUrl: 'https://via.placeholder.com/400x300?text=Hugo',
-                description: 'Hugo Souza é goleiro do Corinthians, fallback.',
-                achievements: ['Série A 2024'],
-                stats: { appearances: 110, goals: 0, assists: 3 }
-            },
-            {
-                id: 2,
-                name: 'Gustavo Henrique',
-                number: 13,
-                position: 'Zagueiro',
-                age: 32,
-                height: '1.87m',
-                nationality: 'Brasil',
-                joinYear: '2024',
-                imageUrl: 'https://via.placeholder.com/400x300?text=Gustavo',
-                description: 'Gustavo Henrique, fallback.',
-                achievements: ['Copa do Brasil 2024'],
-                stats: { appearances: 100, goals: 2, assists: 1 }
-            },
-            {
-                id: 6,
-                name: 'Memphis Depay',
-                number: 10,
-                position: 'Atacante',
-                age: 32,
-                height: '1.88m',
-                nationality: 'Holanda',
-                joinYear: '2024',
-                imageUrl: 'https://via.placeholder.com/400x300?text=Depay',
-                description: 'Memphis Depay, fallback.',
-                achievements: ['Seleção Holandesa'],
-                stats: { appearances: 63, goals: 25, assists: 12 }
+                title: 'Atlético 2-1 Santos',
+                competition: 'BRASIL: Brasileirão',
+                date: '2026-05-08T19:30:00+00:00',
+                thumbnail: 'https://via.placeholder.com/400x300?text=Atl%C3%A9tico+vs+Santos',
+                matchviewUrl: 'https://www.scorebat.com/embed/matchview/12345/',
+                videos: [{ title: 'Destaques', embed: '<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Destaques" frameborder="0" allowfullscreen></iframe>' }]
             }
         ];
     }
@@ -76,7 +44,7 @@ function getPlayerIdFromURL() {
 }
 
 // ========================================
-// FUNÇÃO: Buscar Jogador
+// FUNÇÃO: Buscar Partida
 // ========================================
 async function loadPlayerDetails() {
     try {
@@ -88,9 +56,9 @@ async function loadPlayerDetails() {
             return;
         }
 
-        // Buscar no arquivo players.json
-        const players = await fetchPlayers();
-        const player = players.find(p => p.id == playerId);
+        const players = await fetchMatches();
+        const matchesWithId = players.map((match, index) => ({ ...match, id: index }));
+        const player = matchesWithId.find(p => p.id == playerId);
 
         if (!player) {
             showNotFound();
@@ -101,7 +69,7 @@ async function loadPlayerDetails() {
 
     } catch (error) {
         console.error('Erro ao carregar detalhes:', error);
-        showError('Erro ao carregar os detalhes do jogador.');
+        showError('Erro ao carregar os detalhes da partida.');
     } finally {
         showLoading(false);
     }
@@ -132,77 +100,44 @@ function showNotFound() {
 }
 
 // ========================================
-// FUNÇÃO: Exibir Detalhes do Jogador
+// FUNÇÃO: Exibir Detalhes da Partida
 // ========================================
 function displayPlayerDetails(player) {
     errorAlert.style.display = 'none';
     notFound.style.display = 'none';
 
+    const matchDate = player.date ? new Date(player.date).toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    }) : 'Data não disponível';
+
+    const videoEmbed = player.videos?.[0]?.embed || '';
+
     const html = `
         <div class="col-lg-8">
             <div class="card player-card mb-4">
-                <img src="${player.imageUrl}" class="card-img-top" alt="${player.name}" style="height: 300px; object-fit: cover;">
+                <img src="${player.thumbnail || 'https://via.placeholder.com/400x300?text=Partida'}" class="card-img-top" alt="${player.title}" style="height: 300px; object-fit: cover;">
                 
                 <div class="player-card-body">
-                    <h1 class="mb-2">#${player.number} - ${player.name}</h1>
-                    <h5 class="text-muted mb-3">${player.position}</h5>
+                    <h1 class="mb-2">${player.title}</h1>
+                    <h5 class="text-muted mb-3">${player.competition || 'Competição desconhecida'}</h5>
                     
-                    <p class="text-dark">${player.description}</p>
+                    <p class="text-dark"><strong>Data:</strong> ${matchDate}</p>
+                    <p class="text-dark"><strong>Link oficial:</strong> <a href="${player.matchviewUrl}" target="_blank" rel="noopener">Abrir no Scorebat</a></p>
 
                     <div class="player-highlight mb-4">
-                        <strong>Posição:</strong> <span>${player.position}</span>
+                        <strong>Competição:</strong> <span>${player.competition || 'Sem informação'}</span>
                     </div>
 
-                    <h5 class="mt-4 mb-3">Informações Pessoais</h5>
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <td><strong>Número da Camisa:</strong></td>
-                                <td><strong>#${player.number}</strong></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Idade:</strong></td>
-                                <td>${player.age} anos</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Altura:</strong></td>
-                                <td>${player.height}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Nacionalidade:</strong></td>
-                                <td>${player.nationality}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>No Corinthians desde:</strong></td>
-                                <td>${player.joinYear}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <h5 class="mt-4 mb-3">Estatísticas</h5>
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <td><strong>Jogos:</strong></td>
-                                <td>${player.stats.appearances}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Gols:</strong></td>
-                                <td>${player.stats.goals}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Assistências:</strong></td>
-                                <td>${player.stats.assists}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <h5 class="mt-4 mb-3">Conquistas e Destaques</h5>
-                    <ul class="list-group">
-                        ${player.achievements.map(achievement => 
-                            `<li class="list-group-item">🏆 ${achievement}</li>`
-                        ).join('')}
-                    </ul>
+                    <div class="mb-4">
+                        <h5 class="mb-3">Vídeo dos destaques</h5>
+                        <div class="ratio ratio-16x9">
+                            ${videoEmbed}
+                        </div>
+                    </div>
 
                     <div class="mt-4">
                         <a href="index.html" class="btn btn-primary btn-lg">← Voltar para Listagem</a>
@@ -212,36 +147,24 @@ function displayPlayerDetails(player) {
         </div>
 
         <div class="col-lg-4">
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">👕 Perfil do Jogador</h5>
+                    <h5 class="mb-0">📌 Detalhes da Partida</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Nome:</strong><br>${player.name}</p>
-                    <p><strong>Número:</strong><br>#${player.number}</p>
-                    <p><strong>Posição:</strong><br>${player.position}</p>
-                    <p><strong>Idade:</strong><br>${player.age} anos</p>
-                    <p><strong>Nacionalidade:</strong><br>${player.nationality}</p>
+                    <p><strong>Título:</strong><br>${player.title}</p>
+                    <p><strong>Competição:</strong><br>${player.competition || 'Sem dados'}</p>
+                    <p><strong>Data:</strong><br>${matchDate}</p>
+                    <p><strong>Vídeo:</strong><br>${player.videos?.[0]?.title || 'Não disponível'}</p>
                 </div>
             </div>
 
-            <div class="card mt-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">📊 Rendimento</h5>
-                </div>
-                <div class="card-body">
-                    <p><strong>Jogos:</strong> ${player.stats.appearances}</p>
-                    <p><strong>Gols:</strong> ${player.stats.goals}</p>
-                    <p><strong>Assistências:</strong> ${player.stats.assists}</p>
-                </div>
-            </div>
-
-            <div class="card mt-4">
+            <div class="card">
                 <div class="card-header bg-info text-white">
                     <h5 class="mb-0">ℹ️ Informações</h5>
                 </div>
                 <div class="card-body">
-                    <p class="small">O Corinthians foi fundado em 1910 e é um dos clubes mais populares do Brasil. O time já conquistou títulos importantes como o Campeonato Brasileiro, a Libertadores e vários Campeonatos Paulistas.</p>
+                    <p class="small">Esta página mostra detalhes de uma partida de futebol usando a API pública do Scorebat e JavaScript assíncrono.</p>
                     <p class="small"><strong>Tecnologias:</strong> HTML5, CSS3, Bootstrap, JavaScript ES6+</p>
                 </div>
             </div>

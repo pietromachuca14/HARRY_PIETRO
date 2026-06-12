@@ -1,4 +1,4 @@
-# AV1 DWB - Jogadores do Corinthians 🏟️
+# AV1 DWB - Partidas de Futebol ⚽
 
 **Avaliação:** Desenvolvimento de Websites (DWB) - Parte 1
 
@@ -10,33 +10,21 @@
 
 ## 📋 Descrição do Projeto
 
-Aplicação web dinâmica que exibe dados de **jogadores do Corinthians** em formato interativo e responsivo, utilizando HTML5, CSS3, Bootstrap e JavaScript puro. A aplicação simula o consumo de dados de uma API pública, demonstrando boas práticas de desenvolvimento web.
+Aplicação web que exibe uma lista de partidas de futebol em cards responsivos. Os dados são carregados de uma API pública usando JavaScript puro, HTML5, CSS3 e Bootstrap 5.
 
-### Objetivos Alcançados (Parte 1)
-
-✅ Estrutura de dados JSON com informações de jogadores  
-✅ Manipulação de dados em JavaScript puro com async/await  
-✅ Exibição dinâmica de dados no **DOM**  
-✅ Layout responsivo com **Bootstrap**  
-✅ Sistema de busca e filtros funcional  
-✅ Feedback de carregamento e tratamento de erros  
-✅ Organização em arquivos separados (HTML, CSS, JS)  
-✅ Repositório Git com versionamento inicial  
+O projeto demonstra consumo assíncrono de API, renderização dinâmica no DOM e navegação para uma página de detalhes da partida.
 
 ---
 
 ## 🚀 Tecnologias Utilizadas
 
-| Tecnologia | Descrição |
-|-----------|-----------|
-| **HTML5** | Estrutura semântica da aplicação |
-| **CSS3** | Estilos personalizados com animações e responsividade |
-| **Bootstrap 5** | Framework CSS para layout responsivo |
-| **JavaScript (ES6+)** | Lógica pura sem frameworks |
-| **Fetch API** | Consumo de dados da API |
-| **Async/Await** | Programação assíncrona |
-| **JSON** | Formato de dados da API |
-| **Git/GitHub** | Versionamento de código |
+- HTML5
+- CSS3
+- Bootstrap 5
+- JavaScript (ES6+)
+- Fetch API
+- Async/Await
+- API pública Scorebat
 
 ---
 
@@ -45,17 +33,17 @@ Aplicação web dinâmica que exibe dados de **jogadores do Corinthians** em for
 ```
 av1-dwb-pietro-2bimestre/
 │
-├── index.html          # Página principal com listagem de estádios
-├── detalhes.html       # Página de detalhes (Parte 2)
+├── index.html          # Página principal com listagem de partidas
+├── detalhes.html       # Página de detalhes da partida
 │
 ├── css/
-│   └── style.css       # Estilos personalizados com Bootstrap
+│   └── style.css       # Estilos personalizados
 │
 ├── js/
 │   ├── script.js       # Lógica da página de listagem
-│   └── detalhes.js     # Lógica da página de detalhes (Parte 2)
+│   └── detalhes.js     # Lógica da página de detalhes
 │
-├── README.md           # Este arquivo
+├── README.md           # Documentação do projeto
 └── .gitignore          # Arquivos ignorados pelo Git
 ```
 
@@ -63,315 +51,123 @@ av1-dwb-pietro-2bimestre/
 
 ## 🔌 Fonte de Dados
 
-**Dados Locais - Jogadores do Corinthians**  
-Banco de dados em JSON com informações de 12 jogadores principais do elenco.
+A aplicação consome dados da API pública do Scorebat:
 
-```javascript
-// Estrutura de dados dos jogadores
+`https://www.scorebat.com/video-api/v3/`
+
+A resposta inclui partidas com título, competição, data, imagem em miniatura e vídeo de destaques.
+
+### Exemplo de partida
+
+```json
 {
-    id: 1,
-    name: 'Nome do Jogador',
-    number: 12,           // Número da camisa
-    position: 'Goleiro',  // Posição
-    age: 35,              // Idade
-    height: '1.84m',      // Altura
-    nationality: 'Brasil', // Nacionalidade
-    joinYear: '2012',     // Ano que entrou no clube
-    stats: {              // Estatísticas
-        appearances: 500,
-        goals: 0,
-        assists: 0
+  "title": "Angers - PSG",
+  "competition": "FRANCE: Ligue 1",
+  "date": "2026-06-12T19:30:00+00:00",
+  "thumbnail": "https://www.scorebat.com/thumbnail.jpg",
+  "matchviewUrl": "https://www.scorebat.com/embed/matchview/123456/",
+  "videos": [
+    {
+      "title": "Highlights",
+      "embed": "<iframe ...></iframe>"
     }
+  ]
 }
 ```
 
-### Simulação de Consumo Assíncrono
+### Comportamento em caso de falha
 
-Embora use dados locais, a aplicação simula um comportamento assíncrono típico de uma requisição à API:
-
-```javascript
-async function loadPlayers() {
-    // Simulando delay de 800ms
-    await new Promise(resolve => setTimeout(resolve, 800));
-    // Dados são carregados após o delay
-}
-```
+Se a API não estiver acessível, o projeto usa um fallback local de partidas definidas em `js/script.js` e `js/detalhes.js`.
 
 ---
 
-## 🎯 Funcionalidades - Parte 1
+## 🎯 Funcionalidades
 
-### 1️⃣ Listagem de Jogadores
-- Exibição de 12 jogadores principais do Corinthians em cards responsivos
-- Informações: número, nome, posição, idade, altura, nacionalidade, estatísticas
-- Animações suaves ao carregar
-- Destaque de número da camisa em cada card
-
-### 2️⃣ Buscas e Filtros
-- **Busca por texto:** Nome do jogador ou posição
-- **Filtro por posição:** Goleiro, Zagueiro, Lateral, Meia-Campista, Atacante, etc.
-- Atualização dinâmica e instantânea da listagem
-
-### 3️⃣ Feedback de Usuário
-- Badge de "Carregando..." durante simulação de requisição (800ms)
-- Alerta de sucesso quando dados são carregados
-- Mensagem quando não há resultados para os filtros aplicados
-- Tratamento visual de transições
-
-### 4️⃣ Responsividade
-- Layout adaptável para mobile, tablet e desktop
-- Cards em grid 1, 2 ou 3 colunas conforme resolução
-- Navbar fixa no topo com logo do projeto
-- Filtros centralizados e acessíveis
-
-### 5️⃣ Dados Estruturados
-```javascript
-// Exemplo: Jogador Yuri Alberto
-{
-    id: 10,
-    name: 'Yuri Alberto',
-    number: 9,
-    position: 'Atacante',
-    age: 24,
-    height: '1.84m',
-    nationality: 'Brasil',
-    joinYear: '2022',
-    stats: { 
-        appearances: 95, 
-        goals: 25, 
-        assists: 8 
-    }
-}
-```
+- Listagem de partidas de futebol em cards responsivos
+- Busca por título ou competição
+- Filtro por competição
+- Indicador de carregamento durante a requisição
+- Mensagem quando não há resultados
+- Página de detalhes com informações da partida e vídeo incorporado
 
 ---
 
 ## 💻 Como Usar
 
-### 1. Clonar o Repositório
-```bash
-git clone https://github.com/seu-usuario/av1-dwb-pietro-2bimestre.git
-cd av1-dwb-pietro-2bimestre
-```
+### Abrir localmente
 
-### 2. Abrir a Aplicação
-Abra o arquivo `index.html` em um navegador moderno:
-- Chrome
-- Firefox
-- Edge
-- Safari
+A aplicação usa `fetch`, então é recomendado servir os arquivos com um servidor local.
+
+Opções:
+
+- Usar a extensão Live Server do VS Code
+- Usar `python -m http.server` na pasta do projeto
 
 ```bash
-# Opção 1: Abrir diretamente
-# Duplo clique em index.html
-
-# Opção 2: Usar Live Server (VS Code)
-# Instale extensão "Live Server"
-# Clique com botão direito em index.html > "Open with Live Server"
+cd c:\Users\pietro_machuca\HARRY_PIETRO\av1-dwb-pietro-2bimestre
+python -m http.server 5500
 ```
 
-### 3. Interagir com a Aplicação
-- Observe o carregamento dos estádios
-- Use a barra de busca para filtrar por nome
-- Selecione um estado no dropdown para filtrar
-- Clique em "Ver Detalhes" para a Parte 2
+Depois acesse:
+
+`http://127.0.0.1:5500/index.html`
+
+### Abrir diretamente
+
+Também é possível abrir `index.html` diretamente, mas a requisição `fetch` pode falhar em alguns navegadores se o arquivo estiver sendo servido via protocolo `file://`.
 
 ---
 
-## 📊 Critérios de Avaliação - Parte 1
+## 🚀 Fluxo da Aplicação
 
-| Critério | Pontos | Status |
-|----------|--------|--------|
-| **Lógica de Consumo** | 2.0 | ✅ |
-| - Uso correto de API | 1.0 | ✅ |
-| - Promessas/async-await | 1.0 | ✅ |
-| **Setup de Ambiente** | 1.5 | ✅ |
-| - Organização de arquivos | 0.8 | ✅ |
-| - Estrutura clara | 0.7 | ✅ |
-| **Interface** | 1.0 | ✅ |
-| - Bootstrap na listagem | 1.0 | ✅ |
-| **GitHub** | 0.5 | ✅ |
-| - Repositório público | 0.25 | ✅ |
-| - Versionamento inicial | 0.25 | ✅ |
-| **TOTAL** | **5.0** | ✅ |
+1. A página `index.html` carrega `js/script.js`
+2. `fetchMatches()` solicita dados à API do Scorebat
+3. Os dados são transformados em objetos com `id`
+4. O conteúdo é renderizado em cards
+5. Busca e filtro atualizam os resultados em tempo real
+6. O botão de detalhes leva a `detalhes.html?id=<id>`
 
 ---
 
-## 🔄 Fluxo da Aplicação
+## 🧠 Como o código funciona
 
-```
-1. DOM Content Loaded
-   ↓
-2. loadStadiums() - Fetch assíncrono
-   ├─ Try: Requisição à API
-   │  ├─ Sucesso: Parse dos dados
-   │  └─ Erro: Carregamento de fallback
-   └─ Finally: Esconder loading
-   ↓
-3. populateStateFilter() - Preenchimento de filtros
-   ↓
-4. displayStadiums() - Renderização dos cards
-   ↓
-5. Event Listeners - Busca e filtros
-```
+### `js/script.js`
+
+- `fetchMatches()` busca os dados da API
+- `loadPlayers()` controla o carregamento, aplica fallback e inicia a renderização
+- `populatePositionFilter()` preenche o filtro de competição
+- `displayPlayers()` cria os cards de partidas
+- `filterPlayers()` filtra por texto e competição
+
+### `js/detalhes.js`
+
+- `getPlayerIdFromURL()` lê o parâmetro `id`
+- `loadPlayerDetails()` busca a lista de partidas e encontra a partida correta
+- `displayPlayerDetails()` mostra detalhes, data formatada e o vídeo de destaque
 
 ---
 
-## 🎨 Paleta de Cores
+## 📌 Observações
 
-```css
---primary-color: #1e3c72 (Azul escuro)
---secondary-color: #2a5298 (Azul)
---accent-color: #f39c12 (Laranja)
---text-color: #333 (Cinza escuro)
---light-bg: #f8f9fa (Cinza claro)
-```
+- A API pública do Scorebat não exige autenticação
+- A lista de partidas pode variar conforme a resposta do servidor
+- A página de detalhes depende do parâmetro `id` na URL
 
 ---
 
-## 📝 Documentação do Código
+## ✅ Status
 
-### Funções Principais
-
-#### `loadPlayers()`
-Carrega dados dos jogadores de forma assíncrona.
-```javascript
-async function loadPlayers() {
-    try {
-        showLoading(true);
-        // Simula delay de 800ms (típico de requisição)
-        await new Promise(resolve => setTimeout(resolve, 800));
-        allPlayers = playersAPI;
-        displayPlayers(allPlayers);
-        showSuccess();
-    } catch (error) {
-        showError('Erro ao carregar dados dos jogadores.');
-    }
-}
-```
-
-#### `filterPlayers()`
-Filtra jogadores por busca de texto e posição.
-```javascript
-function filterPlayers() {
-    const searchTerm = searchInput.value.toLowerCase();
-    const selectedPosition = positionFilter.value;
-    
-    filteredPlayers = allPlayers.filter(player => {
-        const matchesSearch = 
-            player.name.toLowerCase().includes(searchTerm) ||
-            player.position.toLowerCase().includes(searchTerm);
-        const matchesPosition = !selectedPosition || 
-            player.position === selectedPosition;
-        return matchesSearch && matchesPosition;
-    });
-    
-    displayPlayers(filteredPlayers);
-}
-```
-
-#### `createPlayerCard(player)`
-Cria um elemento DOM em Bootstrap para exibir as informações de um jogador.
-```javascript
-function createPlayerCard(player) {
-    // Retorna elemento HTML com:
-    // - Número da camisa destacado
-    // - Nome do jogador
-    // - Posição, idade, altura, nacionalidade
-    // - Estatísticas (jogos, gols, assistências)
-    // - Link para página de detalhes
-}
-```
-
-#### `displayPlayers(players)`
-Renderiza os cards dos jogadores no DOM.
-
-#### `populatePositionFilter()`
-Popula dinamicamente o dropdown de filtro por posição com as opções disponíveis.
-
----
-
-## 🚨 Fluxo da Aplicação
-
-```
-1. DOM Content Loaded
-   ↓
-2. loadPlayers() - Carregamento assíncrono
-   ├─ Simula delay de 800ms
-   ├─ Carrega banco de dados local
-   └─ Popula filtros dinamicamente
-   ↓
-3. displayPlayers() - Renderização dos cards
-   ↓
-4. Event Listeners - Busca e filtros em tempo real
-   ├─ Busca por nome/posição
-   └─ Filtro por posição
-   ↓
-5. Navegação para Detalhes (Parte 2)
-   └─ Passa ID do jogador na URL
-```
-
----
-
-## 🔗 Links Úteis
-
-- 📚 [MDN - JavaScript Assíncrono](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)
-- 🎨 [Bootstrap Documentation](https://getbootstrap.com/docs/5.0/)
-- 🏟️ [Corinthians - Site Oficial](https://www.corinthians.com.br/)
-- 📋 [URLSearchParams - MDN](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
-
----
-
-## 📝 Próximas Etapas - Parte 2
-
-A segunda parte do projeto incluirá:
-
-- ✅ Página `detalhes.html` com perfil completo do jogador
-- ✅ Navegação via parâmetros de URL (URLSearchParams)
-- ✅ Exibição de estatísticas expandidas e histórico
-- ✅ Modularização do código JavaScript
-- ✅ Melhor organização e UX na navegação
-- ✅ Atualização do README com todos os detalhes
-
-### Dados Expandidos na Parte 2
-```javascript
-// Informações adicionais de cada jogador
-{
-    description: 'Descrição detalhada do jogador',
-    achievements: ['Conquista 1', 'Conquista 2', ...],
-    stats: {
-        appearances: 500,
-        goals: 0,
-        assists: 0,
-        additionalStats: {...}
-    }
-}
-```
-
----
-
-## 👨‍💻 Desenvolvimento
-
-**Desenvolvido com:**
-- Visual Studio Code
-- Git/GitHub
-- Bootstrap 5
-- ES6+ JavaScript
+- Projeto alinhado ao consumo de API pública
+- Busca e filtro funcionais
+- Interface responsiva com Bootstrap
+- Página de detalhes implementada
 
 ---
 
 ## 📄 Licença
 
-Este projeto foi desenvolvido para fins educacionais.
+Projeto criado para fins educacionais.
 
 ---
 
-## 📧 Contato
-
-**Aluno:** Pietro  
-**Matrícula:** -  
-**Data de Entrega:** 08/05/2026  
-
----
-
-**Última atualização:** 08/05/2026
+**Última atualização:** 12/06/2026
